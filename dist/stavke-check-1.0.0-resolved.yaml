@@ -61,7 +61,7 @@ paths:
           description: The user has been logged in
         "400":
           description: Wrong input parameters
-  /PrevDetails/{recipeId}:
+  /recipes/PrevDetails/{recipeId}:
     get:
       tags:
       - recipe
@@ -80,7 +80,7 @@ paths:
           description: Recipe has been found
         "400":
           description: Recipe id does not exist
-  /FullDetails/{id}:
+  /recipes/FullDetails/{id}:
     get:
       tags:
       - recipe
@@ -99,7 +99,7 @@ paths:
           description: Recipe has been found
         "400":
           description: Recipe id does not exist
-  /searchRecipe:
+  /recipes/searchRecipe:
     get:
       tags:
       - recipe
@@ -149,7 +149,7 @@ paths:
           description: At least one recipe has been found
         "400":
           description: non recipe was found
-  /created:
+  /user/created:
     get:
       tags:
       - user
@@ -159,7 +159,7 @@ paths:
           description: Favorites recipes have been found
         "400":
           description: Username does not exist
-  /favorites:
+  /user/favorites:
     get:
       tags:
       - user
@@ -185,7 +185,7 @@ paths:
           description: Recipes has been added to user
         "400":
           description: User name or recipe id does not exist
-  /family:
+  /user/family:
     get:
       tags:
       - user
@@ -211,7 +211,7 @@ paths:
           description: Recipe has been added
         "400":
           description: One of the parameters is missing
-  /addNewRecipe:
+  /user/addNewRecipe:
     post:
       tags:
       - user

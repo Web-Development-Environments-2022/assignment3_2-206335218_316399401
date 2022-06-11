@@ -1,11 +1,11 @@
-var mysql = require('mysql');
+var mysql = require('mysql2');
 require("dotenv").config();
 
 
 const config={
 connectionLimit:4,
-  host: process.env.host,//"localhost"
-  user: process.env.user,//"root"
+  host: "localhost" ,//process.env.host,//"localhost"
+  user: "root", //process.env.user,//"root"
   // password: "pass_root@123",
   password: "Noastav" ,
   database:"n&sdb"

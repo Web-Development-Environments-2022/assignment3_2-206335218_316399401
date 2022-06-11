@@ -17,6 +17,7 @@ router.post("/Register", async (req, res, next) => {
       password: req.body.password,
       email: req.body.email,
     }
+    console.log(req.body.username)
     let users = [];
     users = await DButils.execQuery("SELECT username from users");
 

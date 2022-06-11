@@ -3,6 +3,8 @@ var router = express.Router();
 const DButils = require("./utils/DButils");
 const user_utils = require("./utils/user_utils");
 const recipe_utils = require("./utils/recipes_utils");
+var recipe_id = 0;
+var famRecipe_id = 0;
 
 /**
  * Authenticate all incoming requests by middleware
@@ -77,10 +79,37 @@ router.get('/family', async (req,res,next) => {
   }
 });
 
+router.post("/family", async (req, res, next) => {
+  try {
+
+    let recipe_details = {
+        id: famRecipe_id++,//TODO add id !!
+        creatorUserName: req.session.username,
+        writer: req.body.writer,
+        customaryTime: req.body.customaryTime,
+        ingrediants: req.body.ingrediants,
+        instructions: req.body.instructions,
+        image: req.body.image,
+        title: req.body.title,
+        
+    }
+
+    await DButils.execQuery(
+      `INSERT INTO familyrecipes VALUES ('${recipe_details.id}', '${recipe_details.creatorUserName}', '${recipe_details.writer}',
+      '${recipe_details.customaryTime}', '${recipe_details.ingrediants}', '${recipe_details.instructions}', '${recipe_details.image}', 
+      '${recipe_details.title}')`
+    );
+    res.status(201).send({ message: "recipe created", success: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post("/addNewRecipe", async (req, res, next) => {
   try {
 
     let recipe_details = {
+        id: recipe_id++, //TODO add id
         title: req.body.title,
         readyInMinutes: req.body.readyInMinutes,
         image: req.body.image,
@@ -89,14 +118,14 @@ router.post("/addNewRecipe", async (req, res, next) => {
         vegetarian: req.body.vegetarian,
         glutenFree: req.body.glutenFree,
         servings: req.body.servings,
-        extendedIngredients: req.body.extendedIngredients,
+        ingredients: req.body.ingredients,
+        instructions: req.body.instructions,
         creatorUserName: req.session.username,
     }
-
     await DButils.execQuery(
       `INSERT INTO recipes VALUES ('${recipe_details.id}', '${recipe_details.title}', '${recipe_details.readyInMinutes}',
       '${recipe_details.image}', '${recipe_details.popularity}', '${recipe_details.vegan}', '${recipe_details.vegetarian}', 
-      '${recipe_details.glutenFree}', '${recipe_details.servings}', '${recipe_details.extendedIngredients}', , '${recipe_details.creatorUserName}')`
+      '${recipe_details.glutenFree}', '${recipe_details.servings}', '${recipe_details.ingredients}', '${recipe_details.instructions}', '${recipe_details.creatorUserName}')`
     );
     res.status(201).send({ message: "recipe created", success: true });
   } catch (error) {

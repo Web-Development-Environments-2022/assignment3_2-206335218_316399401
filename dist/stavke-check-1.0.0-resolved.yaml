@@ -1,0 +1,393 @@
+---
+openapi: 3.0.0
+info:
+  title: Simple Inventory API
+  description: This is a simple API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+# - url: https://virtserver.swaggerhub.com/stavke/check/1.0.0
+#   description: SwaggerHub API Auto Mocking
+# - url: https://virtserver.swaggerhub.com/stavke/API/1.0.0
+#   description: SwaggerHub API Auto Mocking
+# - url: https://virtserver.swaggerhub.com/stavke/lab6API/1.0.0
+#   description: SwaggerHub API Auto Mocking
+  - url: http://127.0.0.1:80
+tags:
+- name: user
+  description: A person who has registered to the website
+- name: recipe
+  description: List of ingredients and instructions required for food preperation
+- name: auth
+  description: Authentication actions
+paths:
+  /Register:
+    post:
+      tags:
+      - auth
+      summary: A new user from client is added to the server
+      description: A JSON object contains all the details about the new user.
+      requestBody:
+        description: User details for registration
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserReg'
+        required: true
+      responses:
+        "201":
+          description: A new user has been added
+        "400":
+          description: Wrong input parameters
+  /Login:
+    post:
+      tags:
+      - auth
+      summary: A user from client is connected to the server
+      description: A JSON object contains all the details about the new user.
+      requestBody:
+        description: User's username and password for login
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+        required: true
+      responses:
+        "201":
+          description: The user has been logged in
+        "400":
+          description: Wrong input parameters
+  /PrevDetails/{recipeId}:
+    get:
+      tags:
+      - recipe
+      summary: get recipe by id
+      parameters:
+      - name: recipeId
+        in: path
+        description: the recipe's id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "201":
+          description: Recipe has been found
+        "400":
+          description: Recipe id does not exist
+  /FullDetails/{id}:
+    get:
+      tags:
+      - recipe
+      summary: get recipe by id with extanded details
+      parameters:
+      - name: id
+        in: path
+        description: the recipe's id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "201":
+          description: Recipe has been found
+        "400":
+          description: Recipe id does not exist
+  /searchRecipe:
+    get:
+      tags:
+      - recipe
+      summary: search recipe using advanced filtering and ranking.
+      parameters:
+      - name: query
+        in: header
+        description: key words for searching a recipe
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: number
+        in: header
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: cuisine
+        in: header
+        description: optional cuisine type that the client will choose from an option list
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: diet
+        in: header
+        description: The diet for which the recipes must be suitable. the client will choose from an option list
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: intolerance
+        in: header
+        description: A comma-separated list of intolerances. All recipes returned must not contain ingredients that are not suitable for people with the intolerances entered.the client will choose from an option list
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "201":
+          description: At least one recipe has been found
+        "400":
+          description: non recipe was found
+  /created:
+    get:
+      tags:
+      - user
+      summary: get favorites recipes by username
+      responses:
+        "201":
+          description: Favorites recipes have been found
+        "400":
+          description: Username does not exist
+  /favorites:
+    get:
+      tags:
+      - user
+      summary: get all recipes created by username
+      responses:
+        "201":
+          description: Favorites recipes have been found
+        "400":
+          description: Username does not exist
+    post:
+      tags:
+      - user
+      summary: add recipe to user's favorites
+      requestBody:
+        description: Username and recipe id
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/favoriteRecipe'
+        required: true
+      responses:
+        "201":
+          description: Recipes has been added to user
+        "400":
+          description: User name or recipe id does not exist
+  /family:
+    get:
+      tags:
+      - user
+      summary: get all family's recipes created by username
+      responses:
+        "201":
+          description: Family's recipes have been found
+        "400":
+          description: Username does not exist
+    post:
+      tags:
+      - user
+      summary: add family recipe to user
+      requestBody:
+        description: Details of the recipe
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createFamilyRecipe'
+        required: true
+      responses:
+        "201":
+          description: Recipe has been added
+        "400":
+          description: One of the parameters is missing
+  /addNewRecipe:
+    post:
+      tags:
+      - user
+      summary: add recipe to user
+      requestBody:
+        description: Details of the recipe
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createRecipe'
+        required: true
+      responses:
+        "201":
+          description: Recipes has been added to user
+        "400":
+          description: User name or recipe id does not exist
+  /Logout:
+    post:
+      tags:
+      - auth
+      summary: remove current user from server
+      responses:
+        "201":
+          description: Logout succeeded
+        "400":
+          description: Logout unsucceeded
+components:
+  schemas:
+    UserReg:
+      required:
+      - country
+      - email
+      - firstname
+      - lastname
+      - password
+      - password_confirmation
+      - username
+      type: object
+      properties:
+        username:
+          maxLength: 8
+          minLength: 3
+          type: string
+          description: username contains between 3 to 8 letters only
+          example: noab
+        firstname:
+          type: string
+          description: user's first name
+          example: Noa
+        lastname:
+          type: string
+          description: user's last name
+          example: Birenboim
+        country:
+          type: string
+          description: user's country
+          example: Israel
+        password:
+          maxLength: 10
+          minLength: 5
+          type: string
+          description: password contains between 5 to 10 chars, at least one of them is a number and a special char
+          example: noa@11
+        password_confirmation:
+          maxLength: 10
+          minLength: 5
+          type: string
+          description: should be exactly the same as password
+          example: noa@11
+        email:
+          type: string
+          description: user's email
+          format: email
+          example: noab@gmail.com
+    UserLogin:
+      required:
+      - password
+      - username
+      type: object
+      properties:
+        username:
+          maxLength: 8
+          minLength: 3
+          type: string
+          description: username contains between 3 to 8 letters only
+          example: noab
+        password:
+          maxLength: 10
+          minLength: 5
+          type: string
+          description: password contains between 5 to 10 chars, at least one of them is a number and a special char
+          example: noa@11
+    createRecipe:
+      required:
+      - glutenFree
+      - ingradients
+      - insructions
+      - name
+      - picture
+      - popularity
+      - readyInMinutes
+      - servings
+      - vegan
+      - vegetarian
+      type: object
+      properties:
+        picture:
+          type: object
+          description: the recipe's picture
+        name:
+          type: string
+          description: the recipe's name
+          example: cheese cake
+        readyInMinutes:
+          pattern: ^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)$
+          type: string
+          description: recipe's time preperation
+          example: 01:30
+        vegan:
+          type: boolean
+          description: Is the recipe vegan
+        vegetarian:
+          type: boolean
+          description: Is the recipe vegetarian
+        glutenFree:
+          type: boolean
+          description: Is the recipe with or without gluten
+        ingredients:
+          type: string
+          description: the ingredients of recipe
+        insructions:
+          type: string
+          description: the insructions for preparing the recipe
+        popularity:
+          type: number
+          description: how many likes the recipe recieved
+        servings:
+          type: number
+          description: how may dishes
+    favoriteRecipe:
+      required:
+      - recipeId
+      type: object
+      properties:
+        recipeId:
+          type: integer
+          description: recipe id
+    createFamilyRecipe:
+      required:
+      - customaryTime
+      - ingradients
+      - insructions
+      - name
+      - picture
+      - writer
+      type: object
+      properties:
+        picture:
+          type: object
+          description: the recipe's picture
+        name:
+          type: string
+          description: the recipe's name
+          example: cheese cake
+        customaryTime:
+          pattern: ^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)$
+          type: string
+          description: recipe's time preperation
+          example: 01:30
+        writer:
+          type: string
+          description: whose recipe
+          example: mommy
+        ingredients:
+          type: string
+          description: the ingredients of recipe
+        insructions:
+          type: string
+          description: the insructions for preparing the recipe

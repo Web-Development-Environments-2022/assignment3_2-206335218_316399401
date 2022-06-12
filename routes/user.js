@@ -3,8 +3,7 @@ var router = express.Router();
 const DButils = require("./utils/DButils");
 const user_utils = require("./utils/user_utils");
 const recipe_utils = require("./utils/recipes_utils");
-var recipe_id = 0;
-var famRecipe_id = 0;
+
 
 /**
  * Authenticate all incoming requests by middleware
@@ -45,8 +44,12 @@ router.get('/favorites', async (req,res,next) => {
     const username = req.session.username;
     const recipes_id = await user_utils.getFavoriteRecipes(username);
     let recipes_id_array = [];
-    recipes_id.map((element) => recipes_id_array.push(element.recipe_id)); //extracting the recipe ids into array
-    const results = await recipe_utils.getRecipeDetails(recipes_id_array);
+    recipes_id.map((element) => recipes_id_array.push(element.recipeid)); //extracting the recipe ids into array
+    let promises = [];
+    recipes_id_array.map((id) => {
+        promises.push(recipe_utils.getRecipeDetails(id));
+    });
+    let results = await Promise.all(promises);
     res.status(200).send(results);
   } catch(error){
     next(error); 
@@ -57,10 +60,10 @@ router.get('/created', async (req,res,next) => {
   try{
     const username = req.session.username;
     const recipes_id = await user_utils.getCreatorRecipes(username);
-    let recipes_id_array = [];
-    recipes_id.map((element) => recipes_id_array.push(element.recipe_id)); //extracting the recipe ids into array
-    const results = await recipe_utils.getRecipeDetails(recipes_id_array);
-    res.status(200).send(results);
+    // let recipes_id_array = [];
+    // recipes_id.map((element) => recipes_id_array.push(element.recipe_id)); //extracting the recipe ids into array
+    // const results = await recipe_utils.getRecipeDetails(recipes_id_array);
+    res.status(200).send(recipes_id);
   } catch(error){
     next(error); 
   }
@@ -70,24 +73,28 @@ router.get('/family', async (req,res,next) => {
   try{
     const username = req.session.username;
     const recipes_id = await user_utils.getFamilyRecipes(username);
-    let recipes_id_array = [];
-    recipes_id.map((element) => recipes_id_array.push(element.recipe_id)); //extracting the recipe ids into array
-    const results = await recipe_utils.getRecipeDetails(recipes_id_array);
-    res.status(200).send(results);
+    // let recipes_id_array = [];
+    // recipes_id.map((element) => recipes_id_array.push(element.recipe_id)); //extracting the recipe ids into array
+    // const results = await recipe_utils.getRecipeDetails(recipes_id_array);
+    res.status(200).send(recipes_id);
   } catch(error){
     next(error); 
   }
 });
 
 router.post("/family", async (req, res, next) => {
+  let lastId = await DButils.execQuery('SELECT id FROM familyrecipes ORDER BY id DESC LIMIT 1')
+  if (lastId==undefined){
+    lastId= -1
+  }
   try {
 
     let recipe_details = {
-        id: famRecipe_id++,//TODO add id !!
+        id: lastId+1,
         creatorUserName: req.session.username,
         writer: req.body.writer,
         customaryTime: req.body.customaryTime,
-        ingrediants: req.body.ingrediants,
+        ingredients: req.body.ingredients,
         instructions: req.body.instructions,
         image: req.body.image,
         title: req.body.title,
@@ -96,7 +103,7 @@ router.post("/family", async (req, res, next) => {
 
     await DButils.execQuery(
       `INSERT INTO familyrecipes VALUES ('${recipe_details.id}', '${recipe_details.creatorUserName}', '${recipe_details.writer}',
-      '${recipe_details.customaryTime}', '${recipe_details.ingrediants}', '${recipe_details.instructions}', '${recipe_details.image}', 
+      '${recipe_details.customaryTime}', '${recipe_details.ingredients}', '${recipe_details.instructions}', '${recipe_details.image}', 
       '${recipe_details.title}')`
     );
     res.status(201).send({ message: "recipe created", success: true });
@@ -106,14 +113,23 @@ router.post("/family", async (req, res, next) => {
 });
 
 router.post("/addNewRecipe", async (req, res, next) => {
+  let lastId = await DButils.execQuery('SELECT id FROM recipes ORDER BY id DESC LIMIT 1')
+  let id;
+  if (lastId[0]==undefined){
+    id= 0;
+  }
+  else{
+    id = lastId[0]["id"] + 1;
+  }  
+
   try {
 
     let recipe_details = {
-        id: recipe_id++, //TODO add id
+        id: id, 
         title: req.body.title,
         readyInMinutes: req.body.readyInMinutes,
         image: req.body.image,
-        popularity: req.body.aggregateLikes,
+        popularity: req.body.popularity,
         vegan: req.body.vegan,
         vegetarian: req.body.vegetarian,
         glutenFree: req.body.glutenFree,

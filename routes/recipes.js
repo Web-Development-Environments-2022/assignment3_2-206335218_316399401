@@ -28,7 +28,7 @@ router.get("/FullDetails/:recipeId", async (req, res, next) => {
 
 router.get("/searchRecipe", async (req, res, next) => {
   try {
-    const recipe = await recipes_utils.searchRecipe(req.params.query, req.params.number, req.params.cuisine, req.params.diet, req.params.intolerance);
+    const recipe = await recipes_utils.getFoundedRecipesDetails(req.query.query, req.query.number, req.query.cuisine, req.query.diet, req.query.intolerances);
     res.send(recipe);
   } catch (error) {
     next(error);

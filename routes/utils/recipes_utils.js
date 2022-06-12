@@ -56,31 +56,28 @@ async function getRecipeDetailsExtended(recipe_id) {
     }
 }
 
-async function searchRecipe(query, number, cuisine, diet, intolerance){
+async function searchRecipe(query, number, cuisine, diet, intolerances){
     return await axios.get(`${api_domain}/complexSearch`, {
         params:{
             query: query,
             number: number,
             cuisine: cuisine,
             diet: diet, 
-            intolerance: intolerance,
+            intolerances: intolerances,
             apiKey: process.env.spooncular_apiKey
         }
     });
 }
 
-async function getFoundedRecipesDetails(query, number, cuisine, diet, intolerance){
-    let answer = await searchRecipe(query, number, cuisine, diet, intolerance);
-    let results = answer.data.results;
-    let promises = []
-    details = []
-    for (let i=0; i < results.length; i++){
-        promises.push(getRecipeInformation(i.id))
-    }
-    let info_res = await Promise.all(promises);
-    return info_res.map((recipe_id) => {
-        return getRecipeDetailsExtended(recipe_id)
-    })
+async function getFoundedRecipesDetails(query, number, cuisine, diet, intolerances){
+    let answer = await searchRecipe(query, number, cuisine, diet, intolerances);
+    let recipes = answer.data.results;
+    let promises = [];
+    recipes.map((recipe) => {
+        promises.push(getRecipeDetails(recipe.id));
+    });
+    let results = await Promise.all(promises);
+    return results;
 }
 
 

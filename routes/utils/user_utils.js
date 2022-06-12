@@ -1,21 +1,21 @@
 const DButils = require("./DButils");
 
 async function markAsFavorite(username, recipe_id){
-    await DButils.execQuery(`insert into favoriterecipes values ('${recipe_id}',${username})`);
+    await DButils.execQuery(`insert into favoritesrecipes values ('${recipe_id}','${username}')`);
 }
 
 async function getFavoriteRecipes(username){
-    const recipes_id = await DButils.execQuery(`select recipeid from favoriterecipes where username='${username}'`);
+    const recipes_id = await DButils.execQuery(`select recipeid from favoritesrecipes where username='${username}'`);
     return recipes_id;
 }
 
 async function getCreatorRecipes(username){
-    const recipes_id = await DButils.execQuery(`select id from recipes where username='${username}'`);
+    const recipes_id = await DButils.execQuery(`select title, readyInMinutes, image, vegan, vegetarian, glutenFree, popularity from recipes where creatorUserName='${username}'`);
     return recipes_id;
 }
 
 async function getFamilyRecipes(username){
-    const recipes_id = await DButils.execQuery(`select id from familyrecipes where username='${username}'`);
+    const recipes_id = await DButils.execQuery(`select title, customaryTime, image, writer, ingredients, instructions from familyrecipes where creatorUserName='${username}'`);
     return recipes_id;
 }
 

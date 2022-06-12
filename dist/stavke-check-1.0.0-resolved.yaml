@@ -106,7 +106,7 @@ paths:
       summary: search recipe using advanced filtering and ranking.
       parameters:
       - name: query
-        in: header
+        in: query
         description: key words for searching a recipe
         required: true
         style: simple
@@ -114,14 +114,14 @@ paths:
         schema:
           type: string
       - name: number
-        in: header
+        in: query
         required: false
         style: simple
         explode: false
         schema:
           type: integer
       - name: cuisine
-        in: header
+        in: query
         description: optional cuisine type that the client will choose from an option list
         required: false
         style: simple
@@ -129,15 +129,15 @@ paths:
         schema:
           type: string
       - name: diet
-        in: header
+        in: query
         description: The diet for which the recipes must be suitable. the client will choose from an option list
         required: false
         style: simple
         explode: false
         schema:
           type: string
-      - name: intolerance
-        in: header
+      - name: intolerances
+        in: query
         description: A comma-separated list of intolerances. All recipes returned must not contain ingredients that are not suitable for people with the intolerances entered.the client will choose from an option list
         required: false
         style: simple
@@ -153,7 +153,7 @@ paths:
     get:
       tags:
       - user
-      summary: get favorites recipes by username
+      summary: get all recipes created by username
       responses:
         "201":
           description: Favorites recipes have been found
@@ -163,7 +163,7 @@ paths:
     get:
       tags:
       - user
-      summary: get all recipes created by username
+      summary: get favorites recipes by username
       responses:
         "201":
           description: Favorites recipes have been found
@@ -307,10 +307,10 @@ components:
     createRecipe:
       required:
       - glutenFree
-      - ingradients
-      - insructions
-      - name
-      - picture
+      - ingredients
+      - instructions
+      - title
+      - image
       - popularity
       - readyInMinutes
       - servings
@@ -318,18 +318,17 @@ components:
       - vegetarian
       type: object
       properties:
-        picture:
+        image:
           type: object
           description: the recipe's picture
-        name:
+        title:
           type: string
           description: the recipe's name
           example: cheese cake
         readyInMinutes:
-          pattern: ^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)$
-          type: string
-          description: recipe's time preperation
-          example: 01:30
+          type: number
+          description: recipe's time preperation in minutes
+          example: 25
         vegan:
           type: boolean
           description: Is the recipe vegan
@@ -342,15 +341,19 @@ components:
         ingredients:
           type: string
           description: the ingredients of recipe
-        insructions:
+          example: "2 eggs, 1 onion, handful mushrooms"
+        instructions:
           type: string
           description: the insructions for preparing the recipe
+          example: "fry all the ingredients in a pan with olive oil"
         popularity:
           type: number
           description: how many likes the recipe recieved
+          example: 20
         servings:
           type: number
           description: how may dishes
+          example: 2
     favoriteRecipe:
       required:
       - recipeId
@@ -362,25 +365,24 @@ components:
     createFamilyRecipe:
       required:
       - customaryTime
-      - ingradients
-      - insructions
-      - name
-      - picture
+      - ingredients
+      - instructions
+      - title
+      - image
       - writer
       type: object
       properties:
-        picture:
+        image:
           type: object
           description: the recipe's picture
-        name:
+        title:
           type: string
           description: the recipe's name
           example: cheese cake
         customaryTime:
-          pattern: ^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)$
           type: string
           description: recipe's time preperation
-          example: 01:30
+          example: desert in shavuot
         writer:
           type: string
           description: whose recipe
@@ -388,6 +390,6 @@ components:
         ingredients:
           type: string
           description: the ingredients of recipe
-        insructions:
+        instructions:
           type: string
           description: the insructions for preparing the recipe

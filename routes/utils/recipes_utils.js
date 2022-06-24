@@ -69,8 +69,28 @@ async function searchRecipe(query, number, cuisine, diet, intolerances){
     });
 }
 
+async function randomRecipes(number){
+    return await axios.get(`${api_domain}/random`, {
+        params:{
+            number: number,
+            apiKey: process.env.spooncular_apiKey
+        }
+    });
+}
+
 async function getFoundedRecipesDetails(query, number, cuisine, diet, intolerances){
     let answer = await searchRecipe(query, number, cuisine, diet, intolerances);
+    let recipes = answer.data.results;
+    let promises = [];
+    recipes.map((recipe) => {
+        promises.push(getRecipeDetails(recipe.id));
+    });
+    let results = await Promise.all(promises);
+    return results;
+}
+
+async function getRandomRecipesDetails(number){
+    let answer = await randomRecipes(number);
     let recipes = answer.data.results;
     let promises = [];
     recipes.map((recipe) => {
@@ -88,6 +108,7 @@ exports.getRecipeDetails = getRecipeDetails;
 exports.getRecipeDetailsExtended = getRecipeDetailsExtended;
 exports.searchRecipe = searchRecipe;
 exports.getFoundedRecipesDetails = getFoundedRecipesDetails;
+exports.getRandomRecipesDetails = getRandomRecipesDetails;
 
 
 

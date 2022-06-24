@@ -149,6 +149,25 @@ paths:
           description: At least one recipe has been found
         "400":
           description: non recipe was found
+  /recipes/random:
+    get:
+      tags:
+      - recipe
+      summary: get random recipes
+      parameters:
+      - name: number
+        in: query
+        description: how many recipes to retrieve
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "201":
+          description: random recipes retrieved
+        "400":
+          description: non recipe was found
   /user/created:
     get:
       tags:

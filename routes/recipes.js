@@ -35,6 +35,15 @@ router.get("/searchRecipe", async (req, res, next) => {
   }
 });
 
+router.get("/random", async (req, res, next) => {
+  try {
+    const recipe = await recipes_utils.getRandomRecipesDetails(3);
+    res.send(recipe);
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 
 

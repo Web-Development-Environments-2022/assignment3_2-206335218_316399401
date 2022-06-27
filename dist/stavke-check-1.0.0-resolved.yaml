@@ -330,7 +330,6 @@ components:
       - instructions
       - title
       - image
-      - popularity
       - readyInMinutes
       - servings
       - vegan
@@ -365,10 +364,6 @@ components:
           type: string
           description: the insructions for preparing the recipe
           example: "fry all the ingredients in a pan with olive oil"
-        popularity:
-          type: number
-          description: how many likes the recipe recieved
-          example: 20
         servings:
           type: number
           description: how may dishes

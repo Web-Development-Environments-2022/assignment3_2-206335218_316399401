@@ -39,7 +39,7 @@ async function getRecipeDetails(recipe_id) {
 
 async function getRecipeDetailsExtended(recipe_id) {
     let recipe_info = await getRecipeInformation(recipe_id);
-    let { id, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree, servings, extendedIngredients } = recipe_info.data;
+    let { id, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, analyzedInstructions, instructions, glutenFree, servings, extendedIngredients } = recipe_info.data;
 
     return {
         id: id,
@@ -52,6 +52,8 @@ async function getRecipeDetailsExtended(recipe_id) {
         glutenFree: glutenFree,
         servings: servings,
         extendedIngredients: extendedIngredients,
+        analyzedInstructions: analyzedInstructions,
+        instructions: instructions,
         
     }
 }
@@ -70,6 +72,7 @@ async function searchRecipe(query, number, cuisine, diet, intolerances){
 }
 
 async function randomRecipes(number){
+    console.log("here")
     return await axios.get(`${api_domain}/random`, {
         params:{
             number: number,
@@ -83,15 +86,16 @@ async function getFoundedRecipesDetails(query, number, cuisine, diet, intoleranc
     let recipes = answer.data.results;
     let promises = [];
     recipes.map((recipe) => {
-        promises.push(getRecipeDetails(recipe.id));
+        promises.push(getRecipeDetailsExtended(recipe.id));
     });
     let results = await Promise.all(promises);
     return results;
 }
 
 async function getRandomRecipesDetails(number){
+    console.log("here2")
     let answer = await randomRecipes(number);
-    let recipes = answer.data.results;
+    let recipes = answer.data.recipes;
     let promises = [];
     recipes.map((recipe) => {
         promises.push(getRecipeDetails(recipe.id));
@@ -107,6 +111,8 @@ async function getRandomRecipesDetails(number){
 exports.getRecipeDetails = getRecipeDetails;
 exports.getRecipeDetailsExtended = getRecipeDetailsExtended;
 exports.searchRecipe = searchRecipe;
+
+exports.randomRecipes = randomRecipes;
 exports.getFoundedRecipesDetails = getFoundedRecipesDetails;
 exports.getRandomRecipesDetails = getRandomRecipesDetails;
 

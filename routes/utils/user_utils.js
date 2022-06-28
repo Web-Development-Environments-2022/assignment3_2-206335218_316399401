@@ -10,7 +10,7 @@ async function getFavoriteRecipes(username){
 }
 
 async function getCreatorRecipes(username){
-    const recipes_id = await DButils.execQuery(`select title, readyInMinutes, image, vegan, vegetarian, glutenFree, popularity from recipes where creatorUserName='${username}'`);
+    const recipes_id = await DButils.execQuery(`select title, readyInMinutes, image, vegan, vegetarian, glutenFree from recipes where creatorUserName='${username}'`);
     return recipes_id;
 }
 

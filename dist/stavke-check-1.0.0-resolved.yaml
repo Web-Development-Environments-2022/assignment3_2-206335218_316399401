@@ -16,7 +16,7 @@ servers:
 #   description: SwaggerHub API Auto Mocking
 # - url: https://virtserver.swaggerhub.com/stavke/lab6API/1.0.0
 #   description: SwaggerHub API Auto Mocking
-  - url: http://127.0.0.1:80
+  - url: http://127.0.0.1:3000
 tags:
 - name: user
   description: A person who has registered to the website

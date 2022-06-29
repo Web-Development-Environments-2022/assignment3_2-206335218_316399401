@@ -247,6 +247,32 @@ paths:
           description: Recipes has been added to user
         "400":
           description: User name or recipe id does not exist
+  /user/viewed:
+    get:
+      tags:
+      - user
+      summary: get last viewed recipes by username
+      responses:
+        "201":
+          description: Last viewed recipes have been found
+        "400":
+          description: Username does not exist
+    post:
+      tags:
+      - user
+      summary: add last viewed recipe by user to the DB 
+      requestBody:
+        description: Username, recipe id, datetime
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/viewedRecipe'
+        required: true
+      responses:
+        "201":
+          description: Recipes has been added to user
+        "400":
+          description: User name or recipe id does not exist
   /Logout:
     post:
       tags:
@@ -407,3 +433,13 @@ components:
         instructions:
           type: string
           description: the insructions for preparing the recipe
+    viewedRecipe:
+      required:
+      - recipeid
+      type: object
+      properties:
+        recipeid:
+          type: integer
+          description: recipe id   
+
+

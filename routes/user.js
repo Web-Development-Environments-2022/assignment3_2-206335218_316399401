@@ -56,6 +56,39 @@ router.get('/favorites', async (req,res,next) => {
   }
 });
 
+router.post('/viewed', async (req,res,next) => {
+  try{
+    const username = req.session.username;
+    const recipe_id = req.body.recipeid;
+    // const datetime = new Date().toLocaleString().replace(',',' ')
+
+    await user_utils.markAsViewed(username,recipe_id);
+    res.status(200).send("The Recipe successfully saved as viewed");
+    } catch(error){
+    next(error);
+  }
+})
+
+/**
+ * This path returns the 3 last viewed recipes by user
+ */
+router.get('/viewed', async (req,res,next) => {
+  try{
+    const username = req.session.username;
+    const recipes_id = await user_utils.getThreeLastViewed(username);
+    let recipes_id_array = [];
+    recipes_id.map((element) => recipes_id_array.push(element.recipeid)); //extracting the recipe ids into array
+    let promises = [];
+    recipes_id_array.map((id) => {
+        promises.push(recipe_utils.getRecipeDetails(id));
+    });
+    let results = await Promise.all(promises);
+    res.status(200).send(results);
+  } catch(error){
+    next(error); 
+  }
+});
+
 router.get('/created', async (req,res,next) => {
   try{
     const username = req.session.username;

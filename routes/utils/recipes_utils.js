@@ -72,7 +72,6 @@ async function searchRecipe(query, number, cuisine, diet, intolerances){
 }
 
 async function randomRecipes(number){
-    console.log("here")
     return await axios.get(`${api_domain}/random`, {
         params:{
             number: number,
@@ -93,7 +92,6 @@ async function getFoundedRecipesDetails(query, number, cuisine, diet, intoleranc
 }
 
 async function getRandomRecipesDetails(number){
-    console.log("here2")
     let answer = await randomRecipes(number);
     let recipes = answer.data.recipes;
     let promises = [];

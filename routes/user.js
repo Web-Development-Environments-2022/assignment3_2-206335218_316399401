@@ -56,6 +56,16 @@ router.get('/favorites', async (req,res,next) => {
   }
 });
 
+router.get('/isFavorite', async (req,res,next) => {
+  try{
+    const username = req.session.username;
+    const isFav = await user_utils.isFavorite(username, req.query.recipeid);
+
+    res.status(200).send(isFav);
+  } catch(error){
+    next(error); 
+  }
+});
 router.post('/viewed', async (req,res,next) => {
   try{
     const username = req.session.username;

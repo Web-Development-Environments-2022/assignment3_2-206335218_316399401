@@ -20,8 +20,15 @@ async function getFamilyRecipes(username){
 }
 
 async function markAsViewed(username, recipeid){
-    // TODO if recipeid already exist - update the time to current time
-    await DButils.execQuery(`insert into viewedrecipes values ('${username}','${recipeid}', now())`);
+    // if recipeid already exist - update the time to current time
+    const isExist = ((await DButils.execQuery(`select *  from viewedrecipes where username = '${username}' and recipeid = '${recipeid}'`)).length > 0)
+    if (isExist){
+        await DButils.execQuery(`update viewedrecipes set datetime = now() where username = '${username}' and recipeid = '${recipeid}'`);
+    }
+    else{
+        await DButils.execQuery(`insert into viewedrecipes values ('${username}','${recipeid}', now())`);
+ 
+    }
 
 }
 
@@ -30,9 +37,16 @@ async function getThreeLastViewed(username){
     return recipes_id;
 }
 
+async function isFavorite(username, recipeid){
+
+    const isExist = ((await DButils.execQuery(`select *  from favoritesrecipes where username = '${username}' and recipeid = '${recipeid}'`)).length > 0)
+    return isExist;
+}
+
 
 exports.markAsViewed = markAsViewed;
 exports.getThreeLastViewed = getThreeLastViewed;
+exports.isFavorite = isFavorite;
 
 exports.markAsFavorite = markAsFavorite;
 exports.getFavoriteRecipes = getFavoriteRecipes;

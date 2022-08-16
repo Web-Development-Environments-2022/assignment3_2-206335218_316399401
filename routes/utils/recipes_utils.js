@@ -13,7 +13,7 @@ async function getRecipeInformation(recipe_id) {
     return await axios.get(`${api_domain}/${recipe_id}/information`, {
         params: {
             includeNutrition: false,
-            apiKey: process.env.spooncular_apiKey
+            apiKey: process.env.spooncular_apiKey || '940ceb29a4be4465bc59c520648c4d98'
         }
     });
 }
@@ -66,7 +66,7 @@ async function searchRecipe(query, number, cuisine, diet, intolerances){
             cuisine: cuisine,
             diet: diet, 
             intolerances: intolerances,
-            apiKey: process.env.spooncular_apiKey
+            apiKey: process.env.spooncular_apiKey || '940ceb29a4be4465bc59c520648c4d98'
         }
     });
 }
@@ -75,7 +75,7 @@ async function randomRecipes(number){
     return await axios.get(`${api_domain}/random`, {
         params:{
             number: number,
-            apiKey: process.env.spooncular_apiKey
+            apiKey: process.env.spooncular_apiKey || '940ceb29a4be4465bc59c520648c4d98'
         }
     });
 }

@@ -8,7 +8,7 @@ connectionLimit:4,
   user: "root", //process.env.user,//"root"
   // password: "pass_root@123",
   password: "Noastav" ,
-  database:"n&sdb"
+  database:"nsdb"
 }
 const pool = new mysql.createPool(config);
 
